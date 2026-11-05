@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnZone - Play & Earn</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#0b1020;color:#f5f7ff;
+  font-family:Arial,sans-serif;padding-bottom:85px
+}
+header{padding:22px 18px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:800;color:#65e6bd}
+.logo span{color:white}
+.avatar{background:#202b42;border-radius:50%;padding:11px}
+main{padding:0 16px;max-width:650px;margin:auto}
+h2{font-size:20px;margin:20px 0 12px}
+.muted{color:#9ba8c3;font-size:13px}
+.card{
+ background:#151e32;border:1px solid #26334d;
+ border-radius:17px;padding:17px;margin-bottom:13px
+}
+.hero{background:linear-gradient(130deg,#173e46,#192746)}
+.hero h1{font-size:25px;margin:10px 0}
+.balance{font-size:34px;font-weight:bold;margin:12px 0;color:#65e6bd}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat strong{display:block;font-size:21px;margin-top:9px}
+.stat small{color:#9ba8c3}
+button{
+ border:0;border-radius:11px;padding:12px 16px;
+ background:#65e6bd;color:#09221c;font-weight:bold;
+ cursor:pointer
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.full{width:100%;margin-top:13px}
+.game{display:flex;align-items:center;gap:13px}
+.game-icon{font-size:30px;background:#25344c;padding:12px;border-radius:12px}
+.game-info{flex:1}
+.game-info strong{display:block;margin-bottom:5px}
+nav{
+ position:fixed;bottom:0;left:0;right:0;
+ background:#111a2c;border-top:1px solid #293650;
+ display:flex;justify-content:space-around;padding:12px 4px;
+ z-index:5
+}
+nav button{background:none;color:#aab6ce;padding:7px;font-size:12px}
+nav button.active{color:#65e6bd}
+nav span{display:block;font-size:19px;margin-bottom:4px}
+.page{display:none}
+.page.active{display:block}
+.rule{font-size:12px;color:#aab6ce;line-height:1.6;margin-top:12px}
+.line{display:flex;justify-content:space-between;gap:10px;margin:12px 0}
+footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">Earn<span>Zone</span></div>
+ <div class="avatar">👤</div>
+</header>
+
+<main>
+
+<section id="home" class="page active">
+ <div class="card hero">
+  <div class="muted">WELCOME TO EARNZONE</div>
+  <h1>Play Games. Earn Rewards.</h1>
+  <p class="muted">Enjoy games and collect rewards.</p>
+  <div class="balance">$50.00</div>
+  <div class="muted">Illustrative total earnings</div>
+ </div>
+
+ <div class="stats">
+  <div class="card stat">
+   <small>🪙 Total Coins</small>
+   <strong>10,000</strong>
+  </div>
+  <div class="card stat">
+   <small>💵 Withdrawable</small>
+   <strong>$5.00</strong>
+  </div>
+  <div class="card stat">
+   <small>📺 Ads Watched</small>
+   <strong>10</strong>
+  </div>
+  <div class="card stat">
+   <small>🎮 Games Played</small>
+   <strong>12</strong>
+  </div>
+ </div>
+
+ <div class="card">
+  <h2>Daily Reward Ads</h2>
+  <p class="muted">Daily limit: 10 verified rewarded ads</p>
+  <div class="line"><span>Ads watched</span><strong>10 / 10</strong></div>
+  <button class="full" disabled>Reward Ads Coming Soon</button>
+ </div>
+
+ <div class="card">
+  <h2>Withdrawal</h2>
+  <div class="line"><span>Total earnings</span><strong>$50.00</strong></div>
+  <div class="line"><span>Available to withdraw</span><strong>$5.00</strong></div>
+  <button class="full" disabled>Withdrawal Coming Soon</button>
+  <p class="rule">Withdrawal rule: 10% of eligible earnings is withdrawable. For example, $50 = $5, $100 = $10 and $150 = $15. Subject to verification and payment rules.</p>
+ </div>
+</section>
+
+<section id="games" class="page">
+ <h2>🎮 Our Games</h2>
+ <p class="muted" style="margin-bottom:15px">Choose a game and enjoy playing.</p>
+ <div class="card game">
+  <div class="game-icon">🧩</div>
+  <div class="game-info"><strong>Block Puzzle</strong><small class="muted">Puzzle game</small></div>
+  <button disabled>Coming Soon</button>
+ </div>
+ <div class="card game">
+  <div class="game-icon">💧</div>
+  <div class="game-info"><strong>Water Sort Puzzle</strong><small class="muted">Logic game</small></div>
+  <button disabled>Coming Soon</button>
+ </div>
+ <div class="card game">
+  <div class="game-icon">🔤</div>
+  <div class="game-info"><strong>Word Connect</strong><small class="muted">English word game</small></div>
+  <button disabled>Coming Soon</button>
+ </div>
+</section>
+
+<section id="referral" class="page">
+ <h2>👥 Referral Program</h2>
+ <div class="card">
+  <h2>Invite Friends</h2>
+  <p class="muted">Invite friends and earn a referral bonus when they qualify.</p>
+  <div class="balance">$5.00</div>
+  <p class="muted">Illustrative referral bonus per qualified referral</p>
+  <div class="line"><span>Your referral code</span><strong>EARNZONE123</strong></div>
+  <button class="full" onclick="alert('Referral link will be available after account setup.')">Copy Referral Link</button>
+  <p class="rule">Referral bonus is tracked separately. Withdrawal eligibility rules apply.</p>
+ </div>
+</section>
+
+<section id="profile" class="page">
+ <h2>👤 My Profile</h2>
+ <div class="card">
+  <h2>EarnZone Member</h2>
+  <p class="muted">Demo profile · Account setup coming soon</p>
+  <div class="line"><span>Total ads watched</span><strong>10</strong></div>
+  <div class="line"><span>Total games played</span><strong>12</strong></div>
+  <div class="line"><span>Total coins</span><strong>10,000</strong></div>
+  <div class="line"><span>Total earnings</span><strong>$50.00</strong></div>
+  <div class="line"><span>Referral bonus</span><strong>$5.00</strong></div>
+  <div class="line"><span>Withdrawal history</span><strong>None</strong></div>
+ </div>
+</section>
+
+</main>
+
+<nav>
+ <button class="active" onclick="showPage('home',this)"><span>⌂</span>Home</button>
+ <button onclick="showPage('games',this)"><span>🎮</span>Games</button>
+ <button onclick="showPage('referral',this)"><span>👥</span>Referral</button>
+ <button onclick="showPage('profile',this)"><span>👤</span>Profile</button>
+</nav>
+
+<footer>EarnZone © 2026 · Demo Preview</footer>
+
+<script>
+function showPage(id,button){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+ window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
+ 
