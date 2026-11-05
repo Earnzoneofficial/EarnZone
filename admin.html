@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnZone Admin Panel</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101827;color:#fff;font-family:Arial,sans-serif}
+header{padding:20px;background:#172438;display:flex;justify-content:space-between;align-items:center}
+header h2{margin:0;color:#38e0a1}
+main{padding:18px;max-width:1100px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:#1d2b40;padding:18px;border-radius:12px}
+.card h3{font-size:14px;color:#aabbd0}
+.number{font-size:25px;font-weight:bold;color:#38e0a1}
+nav{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:20px 0}
+button{background:#263b55;color:white;border:1px solid #405571;padding:13px;border-radius:9px;font-size:14px}
+button.active{background:#087f62}
+section{background:#1d2b40;padding:18px;border-radius:12px;margin-top:15px}
+input{width:100%;padding:12px;margin:8px 0;background:#101827;border:1px solid #405571;color:white;border-radius:7px}
+.action{background:#087f62;width:100%;margin-top:8px}
+small{color:#aabbd0}
+</style>
+</head>
+<body>
+<header>
+<h2>EarnZone</h2>
+<span>ADMIN DEMO</span>
+</header>
+<main>
+<h2>Dashboard</h2>
+<div class="grid">
+<div class="card"><h3>Total Users</h3><div class="number">0</div></div>
+<div class="card"><h3>Website Revenue</h3><div class="number">$0</div></div>
+<div class="card"><h3>Pending Withdrawals</h3><div class="number">0</div></div>
+<div class="card"><h3>Total User Coins</h3><div class="number">0</div></div>
+</div>
+
+<h3>Admin Controls</h3>
+<nav>
+<button onclick="show('ads',this)">📢 Ads Management</button>
+<button onclick="show('coins',this)">🪙 Coin Settings</button>
+<button onclick="show('income',this)">💰 Income Management</button>
+<button onclick="show('withdraw',this)">💳 Withdrawals</button>
+<button onclick="show('payments',this)">🏦 Payment Methods</button>
+<button onclick="show('users',this)">👥 Users Management</button>
+<button onclick="show('games',this)">🎮 Games Management</button>
+<button onclick="show('referral',this)">🤝 Referral</button>
+<button onclick="show('reports',this)">📊 Reports</button>
+<button onclick="show('settings',this)">⚙️ Website Settings</button>
+</nav>
+
+<section id="content">
+<h3>Welcome to EarnZone Admin</h3>
+<p>Manage your website from one place.</p>
+<small>Demo interface only. Changes are not saved.</small>
+</section>
+</main>
+<script>
+const pages={
+ads:`<h3>Ads Management</h3>
+<label>Ad Reward (Coins)</label><input type="number" value="1000">
+<label>Ad Status</label><p>Demo: Ads not connected</p>
+<button class="action">Save Demo Settings</button>`,
+coins:`<h3>Coin & Reward Settings</h3>
+<label>Coins per Dollar</label><input type="number" value="1000">
+<label>Minimum Withdrawal ($)</label><input type="number" value="50">
+<button class="action">Save Demo Settings</button>`,
+income:`<h3>Income Management</h3>
+<p>Ad Revenue: $0</p><p>User Rewards: $0</p>
+<p>Business Profit: $0</p>`,
+withdraw:`<h3>Withdrawal Management</h3>
+<p>No withdrawal requests yet.</p>
+<p>Approve / Reject controls will be connected later.</p>`,
+payments:`<h3>Payment Methods</h3>
+<p>Binance: Enabled (Demo)</p>
+<p>USDT: Enabled (Demo)</p>
+<p>bKash: Enabled (Demo)</p>
+<p>Other Methods: Future</p>`,
+users:`<h3>User Management</h3>
+<p>Total Users: 0</p><p>Block / Unblock / User Details</p>`,
+games:`<h3>Games Management</h3>
+<p>Block Puzzle</p><p>Water Sort</p><p>Word Connect</p>`,
+referral:`<h3>Referral Management</h3>
+<p>Referral Bonus Settings</p>`,
+reports:`<h3>Reports & Analytics</h3>
+<p>Daily / Weekly / Monthly Reports</p>`,
+settings:`<h3>Website Settings</h3>
+<label>Website Name</label><input value="EarnZone">
+<label>Website Currency</label><input value="USD">`
+};
+function show(page,button){
+document.getElementById('content').innerHTML=pages[page];
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+button.classList.add('active');
+}
+</script>
+</body>
+</html>
