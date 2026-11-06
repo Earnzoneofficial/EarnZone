@@ -42,6 +42,79 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
 .auth-message{margin-top:12px;color:#65e6bd;font-size:13px;overflow-wrap:anywhere}
 .auth-actions button{width:100%;margin:7px 0}
 .secondary{background:#263650;color:white}
+/* EARNZONE GAME SYSTEM */
+.game-screen{
+ display:none;
+ background:#151e32;
+ border:1px solid #26334d;
+ border-radius:17px;
+ padding:16px;
+ margin-top:15px;
+}
+.game-screen.active{display:block}
+.game-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:15px;
+}
+.game-board{
+ display:grid;
+ gap:5px;
+ margin:15px auto;
+ max-width:340px;
+}
+.game-cell{
+ aspect-ratio:1;
+ background:#263650;
+ border-radius:6px;
+ cursor:pointer;
+}
+.game-cell.filled{background:#65e6bd}
+.game-actions{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap;
+ margin-top:12px;
+}
+.game-actions button{flex:1}
+.game-score{
+ text-align:center;
+ font-size:22px;
+ color:#65e6bd;
+ margin:12px;
+}
+.water-row{
+ display:flex;
+ justify-content:center;
+ gap:12px;
+ flex-wrap:wrap;
+}
+.water-tube{
+ width:48px;
+ height:150px;
+ border:3px solid #aab6ce;
+ border-top:0;
+ border-radius:0 0 18px 18px;
+ display:flex;
+ flex-direction:column-reverse;
+ overflow:hidden;
+ cursor:pointer;
+}
+.water-color{height:25%;width:100%}
+.word-letters{
+ display:flex;
+ justify-content:center;
+ gap:8px;
+ flex-wrap:wrap;
+ margin:20px 0;
+}
+.word-letters button{min-width:42px}
+.game-message{
+ text-align:center;
+ color:#65e6bd;
+ margin:12px 0;
+}
 </style>
 </head>
 <body>
