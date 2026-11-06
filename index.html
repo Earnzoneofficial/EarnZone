@@ -195,7 +195,45 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
 
  <p class="rule">Games are being prepared. Actual gameplay and reward tracking are not active yet.</p>
 </section>
+<!-- GAME PLAY AREA -->
+<section id="gamePlay" class="page">
 
+ <div class="game-top">
+  <button class="secondary" onclick="backToGames()">← Back</button>
+  <strong id="gameTitle">Game</strong>
+ </div>
+
+ <div class="game-screen" id="blockGame">
+  <h2>🧩 Block Puzzle</h2>
+  <div class="game-score">Score: <span id="blockScore">0</span></div>
+  <div class="game-board" id="blockBoard"></div>
+  <div class="game-actions">
+   <button onclick="resetBlockGame()">Restart</button>
+  </div>
+  <p class="game-message" id="blockMessage">Complete rows to score points!</p>
+ </div>
+
+ <div class="game-screen" id="waterGame">
+  <h2>💧 Water Sort Puzzle</h2>
+  <div class="water-row" id="waterBoard"></div>
+  <p class="game-message" id="waterMessage">Sort the colors into separate tubes!</p>
+  <div class="game-actions">
+   <button onclick="resetWaterGame()">Restart</button>
+  </div>
+ </div>
+
+ <div class="game-screen" id="wordGame">
+  <h2>🔤 Word Connect</h2>
+  <div class="game-score">Score: <span id="wordScore">0</span></div>
+  <h2 id="wordClue" style="text-align:center">Find the words</h2>
+  <div class="word-letters" id="wordLetters"></div>
+  <input id="wordInput" class="auth-input" placeholder="Type a word">
+  <button class="full" onclick="checkWord()">Submit Word</button>
+  <p class="game-message" id="wordMessage"></p>
+  <button class="full secondary" onclick="resetWordGame()">Restart</button>
+ </div>
+
+</section>
 <section id="referral" class="page">
  <h2>👥 Referral Program</h2>
  <div class="card">
