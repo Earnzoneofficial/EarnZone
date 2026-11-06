@@ -204,8 +204,6 @@ export default {
           return json({ error: "Email or username already exists." }, 409);
         }
 
-        const passwordData = await hashPassword(password);
-        const passwordHash = `pbkdf2$${passwordData.salt}$${passwordData.hash}`;
 
         const referralCode = await generateReferralCode(env);
 const usedReferralCode = String(body.referralCode || "").trim().toUpperCase();
@@ -257,9 +255,6 @@ const headers = await createUserSession(env, newUserId);
 
 return json({ success: true, message: "Account created." }, 201, headers);
 
-        const headers = await createUserSession(env, result.meta.last_row_id);
-
-        return json({ success: true, message: "Account created." }, 201, headers);
       }
 
       // USER LOGIN
