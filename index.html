@@ -436,6 +436,7 @@ async function loginUser() {
    setMessage('Login successful!');
    
    await refreshAccount();
+   navigateTo('profile');
   } else {
    setMessage(result.error || 'Login failed.');
   }
