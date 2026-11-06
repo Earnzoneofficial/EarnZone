@@ -702,12 +702,6 @@ function requireLogin(action) {
  return true;
 }
 
-function playGame(name) {
- if(!requireLogin()) return;
-
- alert('You are logged in! ' + name + ' gameplay is coming soon.');
-}
-
 function openRewards() {
  if(!requireLogin()) return;
 
