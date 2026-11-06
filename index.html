@@ -297,13 +297,25 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
 let currentUser = null;
 
 function showPage(id, button) {
- document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
- document.getElementById(id).classList.add('active');
+ const page = document.getElementById(id);
 
- document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+ if(!page) {
+  console.error('Page not found:', id);
+  return;
+ }
+
+ document.querySelectorAll('.page').forEach(p => {
+  p.classList.remove('active');
+ });
+
+ page.classList.add('active');
+
+ document.querySelectorAll('nav button').forEach(b => {
+  b.classList.remove('active');
+ });
+
  if(button) button.classList.add('active');
 
- if(id === 'profile') refreshAccount();
  window.scrollTo(0,0);
 }
 
