@@ -65,7 +65,26 @@ async function sha256(value) {
   const digest = await crypto.subtle.digest("SHA-256", encoder.encode(value));
   return toBase64(new Uint8Array(digest));
 }
+async function generateReferralCode(env) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const bytes = crypto.getRandomValues(new Uint8Array(8));
+
+    const code = Array.from(
+      bytes,
+      byte => chars[byte % chars.length]
+    ).join("");
+
+    const existing = await env.DB.prepare(
+      "SELECT id FROM users WHERE referral_code = ?"
+    ).bind(code).first();
+
+    if (!existing) return code;
+  }
+
+  throw new Error("Could not generate unique referral code.");
+}
 function getCookie(request, name) {
   const cookies = request.headers.get("Cookie") || "";
   const item = cookies.split(";").map(x => x.trim())
