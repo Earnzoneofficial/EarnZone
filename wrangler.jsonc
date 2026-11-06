@@ -7,5 +7,12 @@
     "directory": ".",
     "binding": "ASSETS",
     "run_worker_first": true
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "earnzone-db",
+      "database_id": "13871152-8305-450b-8593-f7ad57dafc30"
+    }
+  ]
 }
