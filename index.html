@@ -175,7 +175,62 @@ function showPage(id,button){
  window.scrollTo(0,0);
 }
 </script>
+<section id="auth" style="padding:20px;background:#151e32;color:white;border-radius:15px;margin:20px 16px;font-family:Arial">
+  <h2>EarnZone Account</h2>
 
+  <input id="username" placeholder="Username" style="width:100%;padding:13px;margin:8px 0">
+  <input id="email" type="email" placeholder="Email" style="width:100%;padding:13px;margin:8px 0">
+  <input id="password" type="password" placeholder="Password (8+ characters)" style="width:100%;padding:13px;margin:8px 0">
+
+  <button onclick="registerUser()" style="width:100%;margin:8px 0">Create Account</button>
+  <button onclick="loginUser()" style="width:100%;margin:8px 0">Login</button>
+  <button onclick="checkUser()" style="width:100%;margin:8px 0">My Profile</button>
+  <button onclick="logoutUser()" style="width:100%;margin:8px 0">Logout</button>
+
+  <p id="authMessage" style="margin-top:12px;color:#65e6bd"></p>
+</section>
+
+<script>
+const API = "";
+
+async function sendAuth(path, data = {}) {
+  const response = await fetch(API + path, {
+    method: path === "/api/me" ? "GET" : "POST",
+    credentials: "same-origin",
+    headers: {"Content-Type":"application/json"},
+    body: path === "/api/me" ? undefined : JSON.stringify(data)
+  });
+
+  const result = await response.json();
+  document.getElementById("authMessage").textContent =
+    result.message || result.error || JSON.stringify(result);
+
+  return result;
+}
+
+function registerUser() {
+  sendAuth("/api/register", {
+    username: document.getElementById("username").value,
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value
+  });
+}
+
+function loginUser() {
+  sendAuth("/api/login", {
+    email: document.getElementById("email").value,
+    password: document.getElementById("password").value
+  });
+}
+
+function checkUser() {
+  sendAuth("/api/me");
+}
+
+function logoutUser() {
+  sendAuth("/api/logout");
+}
+</script>
 </body>
 </html>
  
