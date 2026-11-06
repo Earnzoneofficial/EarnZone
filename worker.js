@@ -338,7 +338,12 @@ export default {
           { "Set-Cookie": "ez_admin=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0" }
         );
       }
-
+if (path === "/api/admin-secret-test") {
+  return json({
+    configured: Boolean(env.ADMIN_SETUP_KEY),
+    secretType: typeof env.ADMIN_SETUP_KEY
+  });
+}
       return env.ASSETS.fetch(request);
 
     } catch (error) {
