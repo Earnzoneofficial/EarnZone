@@ -308,9 +308,21 @@ function showPage(id, button) {
 }
 
 function navigateTo(id) {
+ const page = document.getElementById(id);
+
+ if(!page) {
+  console.error('Page not found:', id);
+  return;
+ }
+
  const buttons = document.querySelectorAll('nav button');
  const index = ['home','games','referral','profile'].indexOf(id);
- showPage(id, buttons[index]);
+
+ if(index >= 0 && buttons[index]) {
+  showPage(id, buttons[index]);
+ } else {
+  showPage(id);
+ }
 }
 
 function openProfile() {
