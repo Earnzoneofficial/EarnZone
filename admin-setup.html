@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EarnZone Admin Setup</title>
+<style>
+body{margin:0;background:#0b1020;color:white;font-family:Arial;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;box-sizing:border-box}
+.box{background:#17213a;padding:25px;border-radius:15px;width:100%;max-width:380px}
+h2{text-align:center}
+input,button{width:100%;padding:14px;margin-top:13px;border:0;border-radius:8px;box-sizing:border-box}
+button{background:#2563eb;color:white;font-weight:bold}
+#msg{text-align:center;margin-top:15px;font-size:14px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>EarnZone Admin Setup</h2>
+<p>Create your Main Admin Account</p>
+
+<form id="setupForm">
+<input type="email" id="email" value="rhbdgamer111@gmail.com" readonly>
+<input type="password" id="password" placeholder="Create password (12+ characters)" minlength="12" required>
+<input type="password" id="setupKey" placeholder="Admin Setup Key" required>
+<button type="submit">Create Main Admin</button>
+</form>
+
+<div id="msg"></div>
+</div>
+
+<script>
+document.getElementById("setupForm").addEventListener("submit",async function(e){
+e.preventDefault();
+
+const msg=document.getElementById("msg");
+msg.textContent="Please wait...";
+
+try{
+const response=await fetch("/api/admin/setup",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+email:document.getElementById("email").value,
+password:document.getElementById("password").value,
+setupKey:document.getElementById("setupKey").value
+})
+});
+
+const data=await response.json();
+msg.textContent=data.message || data.error || (response.ok?"Admin created successfully":"Setup failed");
+
+if(response.ok){
+document.getElementById("setupForm").reset();
+}
+}catch(error){
+msg.textContent="Connection error. Please try again.";
+}
+});
+</script>
+</body>
+</html>
