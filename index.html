@@ -434,6 +434,241 @@ async function loginUser() {
 
   if(response.ok) {
    setMessage('Login successful!');
+   
+// ===== EARNZONE GAME SYSTEM =====
+
+function openGameScreen(name) {
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+ document.getElementById('gamePlay').classList.add('active');
+
+ document.querySelectorAll('.game-screen').forEach(g => g.classList.remove('active'));
+
+ const games = {
+  'Block Puzzle':'blockGame',
+  'Water Sort Puzzle':'waterGame',
+  'Word Connect':'wordGame'
+ };
+
+ document.getElementById('gameTitle').textContent = name;
+ document.getElementById(games[name]).classList.add('active');
+ window.scrollTo(0,0);
+}
+
+function backToGames() {
+ navigateTo('games');
+}
+
+function playGame(name) {
+ if(!requireLogin()) return;
+ openGameScreen(name);
+
+ if(name === 'Block Puzzle') resetBlockGame();
+ if(name === 'Water Sort Puzzle') resetWaterGame();
+ if(name === 'Word Connect') resetWordGame();
+}
+
+// ===== BLOCK PUZZLE =====
+
+let blockCells = [];
+let blockScore = 0;
+let blockShapeIndex = 0;
+
+const blockShapes = [
+ [[0,0]],
+ [[0,0],[0,1]],
+ [[0,0],[1,0]],
+ [[0,0],[0,1],[1,0]],
+ [[0,0],[0,1],[0,2]]
+];
+
+function resetBlockGame() {
+ blockCells = Array(64).fill(false);
+ blockScore = 0;
+ blockShapeIndex = 0;
+ document.getElementById('blockScore').textContent = 0;
+ document.getElementById('blockMessage').textContent = 'Choose a position for your block!';
+ drawBlockBoard();
+}
+
+function drawBlockBoard() {
+ const board = document.getElementById('blockBoard');
+ board.style.gridTemplateColumns = 'repeat(8,1fr)';
+ board.innerHTML = '';
+
+ blockCells.forEach((filled,index) => {
+  const cell = document.createElement('div');
+  cell.className = 'game-cell' + (filled ? ' filled' : '');
+  cell.onclick = () => placeBlock(index);
+  board.appendChild(cell);
+ });
+}
+
+function placeBlock(index) {
+ const shape = blockShapes[blockShapeIndex];
+ const row = Math.floor(index / 8);
+ const col = index % 8;
+
+ const positions = shape.map(([r,c]) => ({
+  r: row+r,
+  c: col+c
+ }));
+
+ if(positions.some(p => p.r >= 8 || p.c >= 8 ||
+    blockCells[p.r*8+p.c])) {
+  document.getElementById('blockMessage').textContent = 'Cannot place here! Try another position.';
+  return;
+ }
+
+ positions.forEach(p => blockCells[p.r*8+p.c] = true);
+
+ let cleared = 0;
+
+ for(let r=0;r<8;r++) {
+  if(blockCells.slice(r*8,r*8+8).every(Boolean)) {
+   for(let c=0;c<8;c++) blockCells[r*8+c] = false;
+   cleared++;
+  }
+ }
+
+ for(let c=0;c<8;c++) {
+  if(Array.from({length:8},(_,r)=>blockCells[r*8+c]).every(Boolean)) {
+   for(let r=0;r<8;r++) blockCells[r*8+c] = false;
+   cleared++;
+  }
+ }
+
+ blockScore += shape.length + cleared*10;
+ document.getElementById('blockScore').textContent = blockScore;
+
+ blockShapeIndex = (blockShapeIndex+1)%blockShapes.length;
+
+ drawBlockBoard();
+
+ document.getElementById('blockMessage').textContent =
+  cleared ? 'Great! Lines cleared: '+cleared : 'Good move! Keep playing.';
+}
+
+// ===== WATER SORT PUZZLE =====
+
+let waterTubes = [];
+let selectedTube = -1;
+
+const waterColors = ['#ff6464','#4f9fff','#ffd166','#b47aff'];
+
+function resetWaterGame() {
+ waterTubes = [
+  ['red','blue','yellow','red'],
+  ['blue','yellow','red','blue'],
+  ['yellow','red','blue','yellow'],
+  [],
+  []
+ ];
+ selectedTube = -1;
+ drawWaterBoard();
+ document.getElementById('waterMessage').textContent = 'Select a tube, then another tube.';
+}
+
+function drawWaterBoard() {
+ const board = document.getElementById('waterBoard');
+ board.innerHTML = '';
+
+ waterTubes.forEach((tube,index) => {
+  const container = document.createElement('div');
+  container.className = 'water-tube';
+  container.style.borderColor = selectedTube === index ? '#65e6bd' : '#aab6ce';
+
+  tube.forEach(color => {
+   const liquid = document.createElement('div');
+   liquid.className = 'water-color';
+   liquid.style.background = {
+    red:'#ff6464',
+    blue:'#4f9fff',
+    yellow:'#ffd166'
+   }[color];
+   container.appendChild(liquid);
+  });
+
+  container.onclick = () => selectWaterTube(index);
+  board.appendChild(container);
+ });
+}
+
+function selectWaterTube(index) {
+ if(selectedTube === -1) {
+  if(waterTubes[index].length === 0) return;
+  selectedTube = index;
+ } else if(selectedTube === index) {
+  selectedTube = -1;
+ } else {
+  const from = waterTubes[selectedTube];
+  const to = waterTubes[index];
+
+  if(to.length < 4 &&
+     (to.length === 0 || to[to.length-1] === from[from.length-1])) {
+   const color = from[from.length-1];
+   to.push(color);
+   from.pop();
+  } else {
+   document.getElementById('waterMessage').textContent = 'Choose an empty tube or matching color.';
+  }
+
+  selectedTube = -1;
+
+  if(waterTubes.every(t => t.length === 0 ||
+     (t.length === 4 && t.every(c => c === t[0])))) {
+   document.getElementById('waterMessage').textContent = '🎉 Puzzle completed!';
+  }
+ }
+
+ drawWaterBoard();
+}
+
+// ===== WORD CONNECT =====
+
+let wordScore = 0;
+const wordList = ['CAT','CAR','ART','TAR','RAT','CART'];
+
+function resetWordGame() {
+ wordScore = 0;
+ document.getElementById('wordScore').textContent = 0;
+ document.getElementById('wordInput').value = '';
+ document.getElementById('wordMessage').textContent = 'Find words using C, A, R and T.';
+ document.getElementById('wordClue').textContent = 'Make English words!';
+ document.getElementById('wordLetters').innerHTML = '';
+
+ ['C','A','R','T'].forEach(letter => {
+  const button = document.createElement('button');
+  button.textContent = letter;
+  button.className = 'secondary';
+  button.onclick = () => {
+   document.getElementById('wordInput').value += letter;
+  };
+  document.getElementById('wordLetters').appendChild(button);
+ });
+}
+
+function checkWord() {
+ const input = document.getElementById('wordInput');
+ const word = input.value.trim().toUpperCase();
+
+ if(wordList.includes(word)) {
+  wordList.splice(wordList.indexOf(word),1);
+  wordScore += word.length*10;
+  document.getElementById('wordScore').textContent = wordScore;
+  document.getElementById('wordMessage').textContent = 'Correct! +' + word.length*10 + ' points.';
+ } else {
+  document.getElementById('wordMessage').textContent = 'Try another word!';
+ }
+
+ input.value = '';
+
+ if(wordList.length === 0) {
+  document.getElementById('wordMessage').textContent = '🎉 All words found! Restart to play again.';
+ }
+}
+
+// ===== END GAME SYSTEM =====
+
    await refreshAccount();
   } else {
    setMessage(result.error || 'Login failed.');
