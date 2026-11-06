@@ -207,9 +207,55 @@ export default {
         const passwordData = await hashPassword(password);
         const passwordHash = `pbkdf2$${passwordData.salt}$${passwordData.hash}`;
 
-        const result = await env.DB.prepare(
-          "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)"
-        ).bind(username, email, passwordHash).run();
+        const referralCode = await generateReferralCode(env);
+const usedReferralCode = String(body.referralCode || "").trim().toUpperCase();
+
+let referrer = null;
+
+if (usedReferralCode) {
+  referrer = await env.DB.prepare(
+    "SELECT id FROM users WHERE referral_code = ?"
+  ).bind(usedReferralCode).first();
+
+  if (!referrer) {
+    return json({ error: "Invalid referral code." }, 400);
+  }
+}
+
+const passwordData = await hashPassword(password);
+const passwordHash = `pbkdf2$${passwordData.salt}$${passwordData.hash}`;
+
+const result = await env.DB.prepare(
+  "INSERT INTO users (username, email, password_hash, referral_code, referred_by) VALUES (?, ?, ?, ?, ?)"
+).bind(
+  username,
+  email,
+  passwordHash,
+  referralCode,
+  referrer ? usedReferralCode : null
+).run();
+
+const newUserId = result.meta.last_row_id;
+
+if (referrer) {
+  await env.DB.batch([
+    env.DB.prepare(
+      "INSERT INTO referrals (referrer_user_id, referred_user_id, referral_code, referrer_reward_usd, referred_reward_usd) VALUES (?, ?, ?, 4.00, 1.00)"
+    ).bind(referrer.id, newUserId, usedReferralCode),
+
+    env.DB.prepare(
+      "UPDATE users SET balance_usd = COALESCE(balance_usd, 0) + 4.00 WHERE id = ?"
+    ).bind(referrer.id),
+
+    env.DB.prepare(
+      "UPDATE users SET balance_usd = COALESCE(balance_usd, 0) + 1.00 WHERE id = ?"
+    ).bind(newUserId)
+  ]);
+}
+
+const headers = await createUserSession(env, newUserId);
+
+return json({ success: true, message: "Account created." }, 201, headers);
 
         const headers = await createUserSession(env, result.meta.last_row_id);
 
