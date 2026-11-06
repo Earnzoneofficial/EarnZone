@@ -1,5 +1,6 @@
 
 const encoder = new TextEncoder();
+const ADMIN_EMAIL = "rhbdgamer111@gmail.com";
 
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
@@ -14,10 +15,7 @@ function json(data, status = 200, extra = {}) {
 function toBase64(bytes) {
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 function fromBase64(value) {
@@ -28,11 +26,7 @@ function fromBase64(value) {
 
 async function hashPassword(password, salt = crypto.getRandomValues(new Uint8Array(16))) {
   const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"]
+    "raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]
   );
 
   const bits = await crypto.subtle.deriveBits(
@@ -48,6 +42,8 @@ async function hashPassword(password, salt = crypto.getRandomValues(new Uint8Arr
 }
 
 async function verifyPassword(password, stored) {
+  if (!stored) return false;
+
   const parts = stored.split("$");
   if (parts.length !== 3 || parts[0] !== "pbkdf2") return false;
 
@@ -77,10 +73,10 @@ function getCookie(request, name) {
   return item ? item.slice(name.length + 1) : null;
 }
 
-async function createSession(env, userId) {
+async function createUserSession(env, userId) {
   const token = toBase64(crypto.getRandomValues(new Uint8Array(32)));
   const tokenHash = await sha256(token);
-  const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const expires = new Date(Date.now() + 7 * 86400000).toISOString();
 
   await env.DB.prepare(
     "INSERT INTO sessions (user_id, token_hash, expires_at) VALUES (?, ?, ?)"
@@ -88,6 +84,20 @@ async function createSession(env, userId) {
 
   return {
     "Set-Cookie": `ez_session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`
+  };
+}
+
+async function createAdminSession(env, email) {
+  const token = toBase64(crypto.getRandomValues(new Uint8Array(32)));
+  const tokenHash = await sha256(token);
+  const expires = new Date(Date.now() + 7 * 86400000).toISOString();
+
+  await env.DB.prepare(
+    "INSERT INTO admin_sessions (token_hash, admin_email, expires_at) VALUES (?, ?, ?)"
+  ).bind(tokenHash, email, expires).run();
+
+  return {
+    "Set-Cookie": `ez_admin=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=604800`
   };
 }
 
@@ -108,16 +118,34 @@ async function getUser(request, env) {
   `).bind(tokenHash, new Date().toISOString()).first();
 }
 
+async function getAdmin(request, env) {
+  const token = getCookie(request, "ez_admin");
+  if (!token) return null;
+
+  const tokenHash = await sha256(token);
+
+  return await env.DB.prepare(`
+    SELECT admins.id, admins.email, admins.role
+    FROM admin_sessions
+    JOIN admins ON admins.email = admin_sessions.admin_email
+    WHERE admin_sessions.token_hash = ?
+      AND admin_sessions.expires_at > ?
+      AND admins.status = 'active'
+  `).bind(tokenHash, new Date().toISOString()).first();
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
     try {
+      // Health check
       if (path === "/api/health") {
         return json({ status: "online", project: "EarnZone" });
       }
 
+      // Database test
       if (path === "/api/db-test") {
         const result = await env.DB.prepare(
           "SELECT name FROM sqlite_master WHERE type='table'"
@@ -130,6 +158,7 @@ export default {
         });
       }
 
+      // USER REGISTRATION
       if (path === "/api/register" && request.method === "POST") {
         const body = await request.json();
         const username = String(body.username || "").trim();
@@ -163,11 +192,12 @@ export default {
           "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)"
         ).bind(username, email, passwordHash).run();
 
-        const headers = await createSession(env, result.meta.last_row_id);
+        const headers = await createUserSession(env, result.meta.last_row_id);
 
         return json({ success: true, message: "Account created." }, 201, headers);
       }
 
+      // USER LOGIN
       if (path === "/api/login" && request.method === "POST") {
         const body = await request.json();
         const email = String(body.email || "").trim().toLowerCase();
@@ -182,18 +212,18 @@ export default {
           return json({ error: "Invalid email or password." }, 401);
         }
 
-        const headers = await createSession(env, user.id);
+        const headers = await createUserSession(env, user.id);
         return json({ success: true, message: "Login successful." }, 200, headers);
       }
 
+      // USER PROFILE
       if (path === "/api/me" && request.method === "GET") {
         const user = await getUser(request, env);
-
         if (!user) return json({ error: "Please login." }, 401);
-
         return json({ success: true, user });
       }
 
+      // USER LOGOUT
       if (path === "/api/logout" && request.method === "POST") {
         const token = getCookie(request, "ez_session");
 
@@ -208,6 +238,104 @@ export default {
           { success: true, message: "Logged out." },
           200,
           { "Set-Cookie": "ez_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0" }
+        );
+      }
+
+      // MAIN ADMIN FIRST-TIME SETUP
+      if (path === "/api/admin/setup" && request.method === "POST") {
+        const body = await request.json();
+        const email = String(body.email || "").trim().toLowerCase();
+        const password = String(body.password || "");
+        const setupKey = String(body.setupKey || "");
+
+        if (!env.ADMIN_SETUP_KEY) {
+          return json({ error: "Admin setup is not configured." }, 500);
+        }
+
+        if (setupKey !== env.ADMIN_SETUP_KEY) {
+          return json({ error: "Invalid setup key." }, 403);
+        }
+
+        if (email !== ADMIN_EMAIL) {
+          return json({ error: "Unauthorized admin email." }, 403);
+        }
+
+        if (password.length < 12 || password.length > 128) {
+          return json({ error: "Password must be 12-128 characters." }, 400);
+        }
+
+        const count = await env.DB.prepare(
+          "SELECT COUNT(*) AS total FROM admins"
+        ).first();
+
+        if (count.total > 0) {
+          return json({ error: "Admin setup has already been completed." }, 409);
+        }
+
+        const passwordData = await hashPassword(password);
+        const passwordHash = `pbkdf2$${passwordData.salt}$${passwordData.hash}`;
+
+        await env.DB.prepare(
+          "INSERT INTO admins (email, password_hash, role) VALUES (?, ?, 'main_admin')"
+        ).bind(email, passwordHash).run();
+
+        const headers = await createAdminSession(env, email);
+
+        return json(
+          { success: true, message: "Main Admin created." },
+          201,
+          headers
+        );
+      }
+
+      // ADMIN LOGIN
+      if (path === "/api/admin/login" && request.method === "POST") {
+        const body = await request.json();
+        const email = String(body.email || "").trim().toLowerCase();
+        const password = String(body.password || "");
+
+        const admin = await env.DB.prepare(
+          "SELECT email, password_hash, role, status FROM admins WHERE email = ?"
+        ).bind(email).first();
+
+        if (!admin || admin.status !== "active" ||
+            !(await verifyPassword(password, admin.password_hash))) {
+          return json({ error: "Invalid admin email or password." }, 401);
+        }
+
+        const headers = await createAdminSession(env, admin.email);
+
+        return json(
+          { success: true, message: "Admin login successful." },
+          200,
+          headers
+        );
+      }
+
+      // ADMIN PROFILE / ACCESS CHECK
+      if (path === "/api/admin/me" && request.method === "GET") {
+        const admin = await getAdmin(request, env);
+
+        if (!admin) return json({ error: "Admin access required." }, 401);
+
+        return json({ success: true, admin });
+      }
+
+      // ADMIN LOGOUT
+      if (path === "/api/admin/logout" && request.method === "POST") {
+        const token = getCookie(request, "ez_admin");
+
+        if (token) {
+          const tokenHash = await sha256(token);
+          await env.DB.prepare(
+            "DELETE FROM admin_sessions WHERE token_hash = ?"
+          ).bind(tokenHash).run();
+        }
+
+        return json(
+          { success: true, message: "Admin logged out." },
+          200,
+          { "Set-Cookie": "ez_admin=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0" }
         );
       }
 
