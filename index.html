@@ -7,10 +7,7 @@
 <title>EarnZone - Play & Earn</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:#0b1020;color:#f5f7ff;
-  font-family:Arial,sans-serif;padding-bottom:85px
-}
+body{background:#0b1020;color:#f5f7ff;font-family:Arial,sans-serif;padding-bottom:85px}
 header{padding:22px 18px;display:flex;justify-content:space-between;align-items:center}
 .logo{font-size:25px;font-weight:800;color:#65e6bd}
 .logo span{color:white}
@@ -18,33 +15,21 @@ header{padding:22px 18px;display:flex;justify-content:space-between;align-items:
 main{padding:0 16px;max-width:650px;margin:auto}
 h2{font-size:20px;margin:20px 0 12px}
 .muted{color:#9ba8c3;font-size:13px}
-.card{
- background:#151e32;border:1px solid #26334d;
- border-radius:17px;padding:17px;margin-bottom:13px
-}
+.card{background:#151e32;border:1px solid #26334d;border-radius:17px;padding:17px;margin-bottom:13px}
 .hero{background:linear-gradient(130deg,#173e46,#192746)}
 .hero h1{font-size:25px;margin:10px 0}
 .balance{font-size:34px;font-weight:bold;margin:12px 0;color:#65e6bd}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .stat strong{display:block;font-size:21px;margin-top:9px}
 .stat small{color:#9ba8c3}
-button{
- border:0;border-radius:11px;padding:12px 16px;
- background:#65e6bd;color:#09221c;font-weight:bold;
- cursor:pointer
-}
+button{border:0;border-radius:11px;padding:12px 16px;background:#65e6bd;color:#09221c;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
 .full{width:100%;margin-top:13px}
 .game{display:flex;align-items:center;gap:13px}
 .game-icon{font-size:30px;background:#25344c;padding:12px;border-radius:12px}
 .game-info{flex:1}
 .game-info strong{display:block;margin-bottom:5px}
-nav{
- position:fixed;bottom:0;left:0;right:0;
- background:#111a2c;border-top:1px solid #293650;
- display:flex;justify-content:space-around;padding:12px 4px;
- z-index:5
-}
+nav{position:fixed;bottom:0;left:0;right:0;background:#111a2c;border-top:1px solid #293650;display:flex;justify-content:space-around;padding:12px 4px;z-index:5}
 nav button{background:none;color:#aab6ce;padding:7px;font-size:12px}
 nav button.active{color:#65e6bd}
 nav span{display:block;font-size:19px;margin-bottom:4px}
@@ -53,13 +38,17 @@ nav span{display:block;font-size:19px;margin-bottom:4px}
 .rule{font-size:12px;color:#aab6ce;line-height:1.6;margin-top:12px}
 .line{display:flex;justify-content:space-between;gap:10px;margin:12px 0}
 footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
+.auth-input{width:100%;padding:13px;margin:8px 0;border-radius:9px;border:1px solid #34435e;background:#0b1020;color:white;font-size:15px}
+.auth-message{margin-top:12px;color:#65e6bd;font-size:13px;overflow-wrap:anywhere}
+.auth-actions button{width:100%;margin:7px 0}
+.secondary{background:#263650;color:white}
 </style>
 </head>
 <body>
 
 <header>
  <div class="logo">Earn<span>Zone</span></div>
- <div class="avatar">👤</div>
+ <div class="avatar" id="headerAvatar">👤</div>
 </header>
 
 <main>
@@ -69,63 +58,69 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
   <div class="muted">WELCOME TO EARNZONE</div>
   <h1>Play Games. Earn Rewards.</h1>
   <p class="muted">Enjoy games and collect rewards.</p>
-  <div class="balance">$50.00</div>
-  <div class="muted">Illustrative total earnings</div>
+  <div class="balance" id="homeBalance">$0.00</div>
+  <div class="muted" id="homeAccountStatus">Guest Mode · Create an account to start earning</div>
  </div>
 
  <div class="stats">
   <div class="card stat">
    <small>🪙 Total Coins</small>
-   <strong>10,000</strong>
+   <strong id="homeCoins">0</strong>
   </div>
   <div class="card stat">
-   <small>💵 Withdrawable</small>
-   <strong>$5.00</strong>
+   <small>💵 Account Balance</small>
+   <strong id="homeWithdrawable">$0.00</strong>
   </div>
   <div class="card stat">
    <small>📺 Ads Watched</small>
-   <strong>10</strong>
+   <strong id="homeAds">0</strong>
   </div>
   <div class="card stat">
    <small>🎮 Games Played</small>
-   <strong>12</strong>
+   <strong id="homeGames">0</strong>
   </div>
  </div>
 
  <div class="card">
   <h2>Daily Reward Ads</h2>
-  <p class="muted">Daily limit: 10 verified rewarded ads</p>
-  <div class="line"><span>Ads watched</span><strong>10 / 10</strong></div>
-  <button class="full" disabled>Reward Ads Coming Soon</button>
+  <p class="muted">Watch eligible rewarded ads to collect coins.</p>
+  <div class="line"><span>Account</span><strong id="adAccountStatus">Guest</strong></div>
+  <button class="full" onclick="openRewards()">Reward Ads</button>
+  <p class="rule">Reward ads are not integrated yet. Coins will only be credited after verified eligible ad events.</p>
  </div>
 
  <div class="card">
   <h2>Withdrawal</h2>
-  <div class="line"><span>Total earnings</span><strong>$50.00</strong></div>
-  <div class="line"><span>Available to withdraw</span><strong>$5.00</strong></div>
-  <button class="full" disabled>Withdrawal Coming Soon</button>
-  <p class="rule">Withdrawal rule: 10% of eligible earnings is withdrawable. For example, $50 = $5, $100 = $10 and $150 = $15. Subject to verification and payment rules.</p>
+  <div class="line"><span>Account Balance</span><strong id="withdrawBalance">$0.00</strong></div>
+  <div class="line"><span>Minimum withdrawal</span><strong>$50.00</strong></div>
+  <button class="full" onclick="openProfile()">View Account</button>
+  <p class="rule">Withdrawals will be available after payment integration and account verification.</p>
  </div>
 </section>
 
 <section id="games" class="page">
  <h2>🎮 Our Games</h2>
- <p class="muted" style="margin-bottom:15px">Choose a game and enjoy playing.</p>
+ <p class="muted" style="margin-bottom:15px">Browse games as a guest. Login is required to play.</p>
+
  <div class="card game">
   <div class="game-icon">🧩</div>
   <div class="game-info"><strong>Block Puzzle</strong><small class="muted">Puzzle game</small></div>
-  <button disabled>Coming Soon</button>
+  <button onclick="playGame('Block Puzzle')">Play</button>
  </div>
+
  <div class="card game">
   <div class="game-icon">💧</div>
   <div class="game-info"><strong>Water Sort Puzzle</strong><small class="muted">Logic game</small></div>
-  <button disabled>Coming Soon</button>
+  <button onclick="playGame('Water Sort Puzzle')">Play</button>
  </div>
+
  <div class="card game">
   <div class="game-icon">🔤</div>
   <div class="game-info"><strong>Word Connect</strong><small class="muted">English word game</small></div>
-  <button disabled>Coming Soon</button>
+  <button onclick="playGame('Word Connect')">Play</button>
  </div>
+
+ <p class="rule">Games are being prepared. Actual gameplay and reward tracking are not active yet.</p>
 </section>
 
 <section id="referral" class="page">
@@ -133,25 +128,46 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
  <div class="card">
   <h2>Invite Friends</h2>
   <p class="muted">Invite friends and earn a referral bonus when they qualify.</p>
-  <div class="balance">$5.00</div>
-  <p class="muted">Illustrative referral bonus per qualified referral</p>
-  <div class="line"><span>Your referral code</span><strong>EARNZONE123</strong></div>
-  <button class="full" onclick="alert('Referral link will be available after account setup.')">Copy Referral Link</button>
-  <p class="rule">Referral bonus is tracked separately. Withdrawal eligibility rules apply.</p>
+  <div class="balance">$0.00</div>
+  <p class="muted">Referral rewards are not active yet.</p>
+  <div class="line"><span>Your referral code</span><strong id="referralCode">Login Required</strong></div>
+  <button class="full" onclick="copyReferral()">Copy Referral Link</button>
+  <p class="rule">Referral rewards will be tracked after the referral system is implemented.</p>
  </div>
 </section>
 
 <section id="profile" class="page">
  <h2>👤 My Profile</h2>
- <div class="card">
-  <h2>EarnZone Member</h2>
-  <p class="muted">Demo profile · Account setup coming soon</p>
-  <div class="line"><span>Total ads watched</span><strong>10</strong></div>
-  <div class="line"><span>Total games played</span><strong>12</strong></div>
-  <div class="line"><span>Total coins</span><strong>10,000</strong></div>
-  <div class="line"><span>Total earnings</span><strong>$50.00</strong></div>
-  <div class="line"><span>Referral bonus</span><strong>$5.00</strong></div>
-  <div class="line"><span>Withdrawal history</span><strong>None</strong></div>
+
+ <div class="card" id="guestBox">
+  <h2>Welcome to EarnZone</h2>
+  <p class="muted">You can browse the website as a guest. Create an account or login to access member features.</p>
+
+  <input class="auth-input" id="username" placeholder="Username (for registration)">
+  <input class="auth-input" id="email" type="email" placeholder="Email address">
+  <input class="auth-input" id="password" type="password" placeholder="Password (8+ characters)">
+
+  <div class="auth-actions">
+   <button onclick="registerUser()">Create Account</button>
+   <button class="secondary" onclick="loginUser()">Login</button>
+  </div>
+
+  <p id="authMessage" class="auth-message"></p>
+ </div>
+
+ <div class="card" id="memberBox" style="display:none">
+  <h2 id="memberName">EarnZone Member</h2>
+  <p class="muted" id="memberEmail"></p>
+
+  <div class="line"><span>Account Status</span><strong id="memberStatus">Active</strong></div>
+  <div class="line"><span>Total Coins</span><strong id="memberCoins">0</strong></div>
+  <div class="line"><span>Account Balance</span><strong id="memberBalance">$0.00</strong></div>
+  <div class="line"><span>Ads Watched</span><strong>0</strong></div>
+  <div class="line"><span>Games Played</span><strong>0</strong></div>
+  <div class="line"><span>Withdrawal History</span><strong>None</strong></div>
+
+  <button class="full secondary" onclick="logoutUser()">Logout</button>
+  <p id="memberMessage" class="auth-message"></p>
  </div>
 </section>
 
@@ -164,73 +180,202 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
  <button onclick="showPage('profile',this)"><span>👤</span>Profile</button>
 </nav>
 
-<footer>EarnZone © 2026 · Demo Preview</footer>
+<footer>EarnZone © 2026 · Play & Earn</footer>
 
 <script>
-function showPage(id,button){
- document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+let currentUser = null;
+
+function showPage(id, button) {
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
  document.getElementById(id).classList.add('active');
- document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
- button.classList.add('active');
+
+ document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+ if(button) button.classList.add('active');
+
+ if(id === 'profile') refreshAccount();
  window.scrollTo(0,0);
 }
+
+function navigateTo(id) {
+ const buttons = document.querySelectorAll('nav button');
+ const index = ['home','games','referral','profile'].indexOf(id);
+ showPage(id, buttons[index]);
+}
+
+function openProfile() {
+ navigateTo('profile');
+}
+
+function setMessage(message, member = false) {
+ const element = document.getElementById(member ? 'memberMessage' : 'authMessage');
+ if(element) element.textContent = message;
+}
+
+async function authRequest(path, data) {
+ const options = {
+  method: data ? 'POST' : 'GET',
+  credentials: 'same-origin',
+  headers: {'Content-Type':'application/json'}
+ };
+
+ if(data) options.body = JSON.stringify(data);
+
+ const response = await fetch(path, options);
+ const result = await response.json();
+
+ return {response, result};
+}
+
+function updateGuestView() {
+ currentUser = null;
+
+ document.getElementById('guestBox').style.display = 'block';
+ document.getElementById('memberBox').style.display = 'none';
+ document.getElementById('headerAvatar').textContent = '👤';
+
+ document.getElementById('homeBalance').textContent = '$0.00';
+ document.getElementById('homeCoins').textContent = '0';
+ document.getElementById('homeWithdrawable').textContent = '$0.00';
+ document.getElementById('withdrawBalance').textContent = '$0.00';
+ document.getElementById('homeAccountStatus').textContent = 'Guest Mode · Login to access member features';
+ document.getElementById('adAccountStatus').textContent = 'Guest';
+ document.getElementById('referralCode').textContent = 'Login Required';
+}
+
+function updateMemberView(user) {
+ currentUser = user;
+
+ document.getElementById('guestBox').style.display = 'none';
+ document.getElementById('memberBox').style.display = 'block';
+ document.getElementById('headerAvatar').textContent = '🟢';
+
+ const balance = Number(user.balance_usd || 0);
+ const coins = Number(user.coins || 0);
+
+ document.getElementById('memberName').textContent = user.username;
+ document.getElementById('memberEmail').textContent = user.email;
+ document.getElementById('memberStatus').textContent = user.status;
+ document.getElementById('memberCoins').textContent = coins.toLocaleString();
+ document.getElementById('memberBalance').textContent = '$' + balance.toFixed(2);
+
+ document.getElementById('homeBalance').textContent = '$' + balance.toFixed(2);
+ document.getElementById('homeCoins').textContent = coins.toLocaleString();
+ document.getElementById('homeWithdrawable').textContent = '$' + balance.toFixed(2);
+ document.getElementById('withdrawBalance').textContent = '$' + balance.toFixed(2);
+ document.getElementById('homeAccountStatus').textContent = 'Member Account · ' + user.username;
+ document.getElementById('adAccountStatus').textContent = 'Logged In';
+}
+
+async function refreshAccount() {
+ try {
+  const {response, result} = await authRequest('/api/me');
+
+  if(response.ok && result.user) {
+   updateMemberView(result.user);
+  } else {
+   updateGuestView();
+  }
+ } catch(error) {
+  updateGuestView();
+  setMessage('Could not connect to the server. Please refresh.');
+ }
+}
+
+async function registerUser() {
+ const username = document.getElementById('username').value.trim();
+ const email = document.getElementById('email').value.trim();
+ const password = document.getElementById('password').value;
+
+ if(!username || !email || !password) {
+  setMessage('Please fill in all fields.');
+  return;
+ }
+
+ try {
+  const {response, result} = await authRequest('/api/register', {
+   username, email, password
+  });
+
+  if(response.ok) {
+   setMessage('Account created successfully!');
+   await refreshAccount();
+  } else {
+   setMessage(result.error || 'Registration failed.');
+  }
+ } catch(error) {
+  setMessage('Connection error. Please try again.');
+ }
+}
+
+async function loginUser() {
+ const email = document.getElementById('email').value.trim();
+ const password = document.getElementById('password').value;
+
+ if(!email || !password) {
+  setMessage('Enter your email and password.');
+  return;
+ }
+
+ try {
+  const {response, result} = await authRequest('/api/login', {
+   email, password
+  });
+
+  if(response.ok) {
+   setMessage('Login successful!');
+   await refreshAccount();
+  } else {
+   setMessage(result.error || 'Login failed.');
+  }
+ } catch(error) {
+  setMessage('Connection error. Please try again.');
+ }
+}
+
+async function logoutUser() {
+ try {
+  const {response, result} = await authRequest('/api/logout', {});
+  if(response.ok) {
+   updateGuestView();
+   setMessage('You are now logged out.');
+   navigateTo('home');
+  } else {
+   setMessage(result.error || 'Logout failed.', true);
+  }
+ } catch(error) {
+  setMessage('Connection error. Please try again.', true);
+ }
+}
+
+function requireLogin(action) {
+ if(!currentUser) {
+  alert('Please create an account or login first.');
+  navigateTo('profile');
+  return false;
+ }
+ return true;
+}
+
+function playGame(name) {
+ if(!requireLogin()) return;
+
+ alert('You are logged in! ' + name + ' gameplay is coming soon.');
+}
+
+function openRewards() {
+ if(!requireLogin()) return;
+
+ alert('Reward ads are not integrated yet. Please wait for the ad system.');
+}
+
+async function copyReferral() {
+ if(!requireLogin()) return;
+
+ alert('Your referral system is being prepared.');
+}
+
+refreshAccount();
 </script>
-<section id="auth" style="padding:20px;background:#151e32;color:white;border-radius:15px;margin:20px 16px;font-family:Arial">
-  <h2>EarnZone Account</h2>
 
-  <input id="username" placeholder="Username" style="width:100%;padding:13px;margin:8px 0">
-  <input id="email" type="email" placeholder="Email" style="width:100%;padding:13px;margin:8px 0">
-  <input id="password" type="password" placeholder="Password (8+ characters)" style="width:100%;padding:13px;margin:8px 0">
-
-  <button onclick="registerUser()" style="width:100%;margin:8px 0">Create Account</button>
-  <button onclick="loginUser()" style="width:100%;margin:8px 0">Login</button>
-  <button onclick="checkUser()" style="width:100%;margin:8px 0">My Profile</button>
-  <button onclick="logoutUser()" style="width:100%;margin:8px 0">Logout</button>
-
-  <p id="authMessage" style="margin-top:12px;color:#65e6bd"></p>
-</section>
-
-<script>
-const API = "";
-
-async function sendAuth(path, data = {}) {
-  const response = await fetch(API + path, {
-    method: path === "/api/me" ? "GET" : "POST",
-    credentials: "same-origin",
-    headers: {"Content-Type":"application/json"},
-    body: path === "/api/me" ? undefined : JSON.stringify(data)
-  });
-
-  const result = await response.json();
-  document.getElementById("authMessage").textContent =
-    result.message || result.error || JSON.stringify(result);
-
-  return result;
-}
-
-function registerUser() {
-  sendAuth("/api/register", {
-    username: document.getElementById("username").value,
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value
-  });
-}
-
-function loginUser() {
-  sendAuth("/api/login", {
-    email: document.getElementById("email").value,
-    password: document.getElementById("password").value
-  });
-}
-
-function checkUser() {
-  sendAuth("/api/me");
-}
-
-function logoutUser() {
-  sendAuth("/api/logout");
-}
-</script>
 </body>
 </html>
- 
