@@ -711,7 +711,24 @@ function openRewards() {
 async function copyReferral() {
  if(!requireLogin()) return;
 
- alert('Your referral system is being prepared.');
+ try {
+  const response = await authRequest('/api/me');
+  const result = await response.json();
+
+  if(!response.ok || !result.user || !result.user.referral_code) {
+   alert('Referral code not found.');
+   return;
+  }
+
+  const referralLink = window.location.origin +
+    '/?ref=' + result.user.referral_code;
+
+  await navigator.clipboard.writeText(referralLink);
+
+  alert('Referral link copied successfully!');
+ } catch(error) {
+  alert('Could not copy referral link. Please try again.');
+ }
 }
 
 refreshAccount();
