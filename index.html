@@ -435,6 +435,15 @@ async function loginUser() {
   if(response.ok) {
    setMessage('Login successful!');
    
+   await refreshAccount();
+  } else {
+   setMessage(result.error || 'Login failed.');
+  }
+ } catch(error) {
+  setMessage('Connection error. Please try again.');
+ }
+}
+
 // ===== EARNZONE GAME SYSTEM =====
 
 function openGameScreen(name) {
@@ -668,15 +677,6 @@ function checkWord() {
 }
 
 // ===== END GAME SYSTEM =====
-
-   await refreshAccount();
-  } else {
-   setMessage(result.error || 'Login failed.');
-  }
- } catch(error) {
-  setMessage('Connection error. Please try again.');
- }
-}
 
 async function logoutUser() {
  try {
