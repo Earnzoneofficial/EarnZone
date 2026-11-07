@@ -734,25 +734,30 @@ function openRewards() {
 }
 
 async function copyReferral() {
- if(!requireLogin()) return;
+ if(!currentUser) {
+  await refreshAccount();
+ }
+
+ if(!currentUser) {
+  alert('Please login first.');
+  navigateTo('profile');
+  return;
+ }
+
+ const code = currentUser.referral_code;
+
+ if(!code) {
+  alert('Referral code not found.');
+  return;
+ }
+
+ const link = window.location.origin + '/?ref=' + code;
 
  try {
-  const response = await authRequest('/api/me');
-  const result = await response.json();
-
-  if(!response.ok || !result.user || !result.user.referral_code) {
-   alert('Referral code not found.');
-   return;
-  }
-
-  const referralLink = window.location.origin +
-    '/?ref=' + result.user.referral_code;
-
-  await navigator.clipboard.writeText(referralLink);
-
+  await navigator.clipboard.writeText(link);
   alert('Referral link copied successfully!');
  } catch(error) {
-  alert('Could not copy referral link. Please try again.');
+  prompt('Copy your referral link:', link);
  }
 }
 
