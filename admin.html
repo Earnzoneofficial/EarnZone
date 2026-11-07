@@ -122,7 +122,71 @@ async function checkAdmin(){
   }
  }catch(error){}
 }
+async function loadUsers(){
+ const box = document.getElementById('usersList');
+ box.textContent = 'Loading users...';
 
+ try{
+  const response = await fetch('/api/admin/users', {
+   credentials: 'same-origin'
+  });
+
+  const result = await response.json();
+
+  if(!response.ok){
+   box.textContent = result.error || 'Could not load users.';
+   return;
+  }
+
+  document.getElementById('totalUsers').textContent =
+   result.stats.total_users || 0;
+
+  document.getElementById('activeUsers').textContent =
+   result.stats.active_users || 0;
+
+  document.getElementById('totalBalance').textContent =
+   Number(result.stats.total_balance || 0).toFixed(2);
+
+  document.getElementById('totalCoins').textContent =
+   result.stats.total_coins || 0;
+
+  box.replaceChildren();
+
+  if(!result.users.length){
+   box.textContent = 'No users registered yet.';
+   return;
+  }
+
+  result.users.forEach(user => {
+   const card = document.createElement('div');
+   card.className = 'request';
+
+   const details = document.createElement('p');
+   details.textContent =
+    'ID: ' + user.id +
+    ' | Username: ' + user.username +
+    ' | Email: ' + user.email +
+    ' | Joined: ' + user.created_at;
+
+   const income = document.createElement('p');
+   income.textContent =
+    'Coins: ' + user.coins +
+    ' | Balance: $' + Number(user.balance_usd || 0).toFixed(2) +
+    ' | Ad Income: $' + Number(user.ad_income || 0).toFixed(2) +
+    ' | Referrals: ' + user.referrals +
+    ' | Withdrawn: $' + Number(user.withdrawn || 0).toFixed(2);
+
+   const status = document.createElement('p');
+   status.textContent = 'Status: ' + user.status;
+
+   card.append(details, income, status);
+   box.append(card);
+  });
+
+ }catch(error){
+  box.textContent = 'Connection error.';
+ }
+}
 async function loadWithdrawals(){
  const box=document.getElementById('requests');
  box.textContent='Loading requests...';
