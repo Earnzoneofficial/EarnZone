@@ -128,7 +128,7 @@ async function getUser(request, env) {
 
   return await env.DB.prepare(`
     SELECT users.id, users.username, users.email,
-           users.coins, users.balance_usd, users.status
+           users.coins, users.balance_usd, users.status,
            users.referral_code
     FROM sessions
     JOIN users ON users.id = sessions.user_id
