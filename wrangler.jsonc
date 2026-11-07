@@ -3,6 +3,9 @@
   "name": "earnzone",
   "main": "worker.js",
   "compatibility_date": "2026-11-06",
+"vars": {
+  "GOOGLE_CLIENT_ID": "962833361527-lh5v38hm3vogu7gde5uh1edr9t02vdn6.apps.googleusercontent.com"
+},
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
