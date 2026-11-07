@@ -551,7 +551,8 @@ if (
 if (path === "/api/admin-secret-test") {
   return json({
     configured: Boolean(env.ADMIN_SETUP_KEY),
-    secretType: typeof env.ADMIN_SETUP_KEY
+    secretType: typeof env.ADMIN_SETUP_KEY,
+    bindings: Object.keys(env)
   });
 }
       return env.ASSETS.fetch(request);
