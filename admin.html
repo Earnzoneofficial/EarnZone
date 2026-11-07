@@ -212,7 +212,39 @@ async function logout(){
  document.getElementById('password').value='';
  message.textContent='Logged out.';
 }
+function handleGoogleCredential(response) {
+  message.textContent = 'Checking Google account...';
 
+  fetch('/api/admin/google-login', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({credential: response.credential})
+  })
+  .then(async r => ({ok: r.ok, result: await r.json()}))
+  .then(({ok, result}) => {
+    if (!ok) {
+      message.textContent = result.error || 'Google login failed.';
+      return;
+    }
+    showDashboard();
+  })
+  .catch(() => {
+    message.textContent = 'Connection error. Try again.';
+  });
+}
+
+window.addEventListener('load', function() {
+  google.accounts.id.initialize({
+    client_id: '962833361527-lh5v38hm3vogu7gde5uh1ed9r t02vdn6.apps.googleusercontent.com'.replace(' ', ''),
+    callback: handleGoogleCredential
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById('googleButton'),
+    {theme: 'outline', size: 'large', text: 'continue_with', width: 260}
+  );
+});
 checkAdmin();
 </script>
 </body>
