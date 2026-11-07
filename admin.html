@@ -45,6 +45,19 @@ placeholder="Admin password">
 <div id="dashboard">
 <div class="card">
 <h1>Admin Dashboard</h1>
+ <div class="card">
+  <h2>User Statistics</h2>
+  <p>Total Accounts: <strong id="totalUsers">0</strong></p>
+  <p>Active Users: <strong id="activeUsers">0</strong></p>
+  <p>Total User Balance: $<strong id="totalBalance">0.00</strong></p>
+  <p>Total Coins: <strong id="totalCoins">0</strong></p>
+</div>
+
+<div class="card">
+  <h2>All Users</h2>
+  <button onclick="loadUsers()">Refresh Users</button>
+  <div id="usersList">Loading users...</div>
+</div>
 <p>Withdrawal Requests</p>
 <button onclick="loadWithdrawals()">Refresh Requests</button>
 <button class="logout" onclick="logout()">Logout</button>
