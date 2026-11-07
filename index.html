@@ -819,6 +819,95 @@ async function copyReferral() {
 
 refreshAccount();
 </script>
+<style>
+.withdrawal-card {
+  padding: 18px;
+  border-radius: 16px;
+}
 
+.withdraw-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.withdraw-info div {
+  background: #151d32;
+  padding: 13px;
+  border-radius: 12px;
+}
+
+.withdraw-info small {
+  display: block;
+  color: #aab5cc;
+  font-size: 11px;
+  margin-bottom: 7px;
+}
+
+.withdraw-info strong {
+  font-size: 17px;
+}
+
+.payment-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+
+.pay-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 8px;
+  background: #151d32;
+  border: 1px solid #34415e;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pay-item input {
+  accent-color: #22c55e;
+}
+
+.pay-item:has(input:checked) {
+  border-color: #22c55e;
+  background: #1b3040;
+}
+
+.pay-logo {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.bkash-logo {
+  background: #e2136e;
+  color: white;
+}
+
+.nagad-logo {
+  background: #f58220;
+  color: white;
+}
+
+.binance-logo {
+  background: #f3ba2f;
+  color: #171717;
+}
+
+.usdt-logo {
+  background: #26a17b;
+  color: white;
+}
+</style>
 </body>
 </html>
