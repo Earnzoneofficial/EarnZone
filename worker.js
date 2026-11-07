@@ -429,7 +429,64 @@ if (path === "/api/withdraw" && request.method === "POST") {
           headers
         );
       }
+// GOOGLE ADMIN LOGIN
+if (path === "/api/admin/google-login" && request.method === "POST") {
+  const body = await request.json();
+  const credential = String(body.credential || "");
 
+  if (!credential || !env.GOOGLE_CLIENT_ID) {
+    return json({ error: "Google login is not configured." }, 500);
+  }
+
+  const googleResponse = await fetch(
+    "https://oauth2.googleapis.com/tokeninfo?id_token=" +
+    encodeURIComponent(credential)
+  );
+
+  if (!googleResponse.ok) {
+    return json({ error: "Invalid Google account." }, 401);
+  }
+
+  const googleUser = await googleResponse.json();
+
+  if (
+    googleUser.aud !== env.GOOGLE_CLIENT_ID ||
+    googleUser.email !== ADMIN_EMAIL ||
+    googleUser.email_verified !== "true"
+  ) {
+    return json({ error: "This Google account is not authorized." }, 403);
+  }
+
+  let admin = await env.DB.prepare(
+    "SELECT email, role, status FROM admins WHERE email = ?"
+  ).bind(ADMIN_EMAIL).first();
+
+  if (!admin) {
+    const randomPassword = crypto.randomUUID() + crypto.randomUUID();
+    const passwordData = await hashPassword(randomPassword);
+    const passwordHash = `pbkdf2$${passwordData.salt}$${passwordData.hash}`;
+
+    await env.DB.prepare(
+      "INSERT INTO admins (email, password_hash, role, status) VALUES (?, ?, 'main_admin', 'active')"
+    ).bind(ADMIN_EMAIL, passwordHash).run();
+
+    admin = await env.DB.prepare(
+      "SELECT email, role, status FROM admins WHERE email = ?"
+    ).bind(ADMIN_EMAIL).first();
+  }
+
+  if (!admin || admin.status !== "active") {
+    return json({ error: "Admin account is inactive." }, 403);
+  }
+
+  const headers = await createAdminSession(env, admin.email);
+
+  return json(
+    { success: true, message: "Google admin login successful." },
+    200,
+    headers
+  );
+}
       // ADMIN PROFILE / ACCESS CHECK
       if (path === "/api/admin/me" && request.method === "GET") {
         const admin = await getAdmin(request, env);
