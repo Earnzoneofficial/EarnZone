@@ -162,48 +162,49 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
   <p class="rule">Reward ads are not integrated yet. Coins will only be credited after verified eligible ad events.</p>
  </div>
 
- <div class="card">
-  <h2>Withdrawal</h2>
+<div class="card withdrawal-card">
+  <h2>💸 Withdrawal</h2>
 
-  <div class="line">
-    <span>Account Balance</span>
-    <strong id="withdrawBalance">$0.00</strong>
+  <div class="withdraw-info">
+    <div>
+      <small>Account Balance</small>
+      <strong id="withdrawBalance">$0.00</strong>
+    </div>
+    <div>
+      <small>Minimum Withdrawal</small>
+      <strong>$50.00</strong>
+    </div>
   </div>
 
-  <div class="line">
-    <span>Minimum Withdrawal</span>
-    <strong>$50.00</strong>
+  <label>Choose Payment Method</label>
+
+  <div class="payment-grid">
+
+    <label class="pay-item">
+      <input type="radio" name="withdrawMethod" value="bKash">
+      <span class="pay-logo bkash-logo">b</span>
+      <span>bKash</span>
+    </label>
+
+    <label class="pay-item">
+      <input type="radio" name="withdrawMethod" value="Nagad">
+      <span class="pay-logo nagad-logo">N</span>
+      <span>Nagad</span>
+    </label>
+
+    <label class="pay-item">
+      <input type="radio" name="withdrawMethod" value="Binance Pay">
+      <span class="pay-logo binance-logo">◆</span>
+      <span>Binance Pay</span>
+    </label>
+
+    <label class="pay-item">
+      <input type="radio" name="withdrawMethod" value="USDT TRC20">
+      <span class="pay-logo usdt-logo">₮</span>
+      <span>USDT TRC20</span>
+    </label>
+
   </div>
-
-  <label>Payment Method</label>
-
-<div class="payment-methods">
-
-  <label class="payment-option">
-    <input type="radio" name="withdrawMethod" value="bKash">
-    <img src="https://logo.clearbit.com/bkash.com" alt="bKash">
-    <span>bKash</span>
-  </label>
-
-  <label class="payment-option">
-    <input type="radio" name="withdrawMethod" value="Nagad">
-    <img src="https://logo.clearbit.com/nagad.com.bd" alt="Nagad">
-    <span>Nagad</span>
-  </label>
-
-  <label class="payment-option">
-    <input type="radio" name="withdrawMethod" value="Binance Pay">
-    <img src="https://logo.clearbit.com/binance.com" alt="Binance">
-    <span>Binance Pay</span>
-  </label>
-
-  <label class="payment-option">
-    <input type="radio" name="withdrawMethod" value="USDT TRC20">
-    <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT">
-    <span>USDT TRC20</span>
-  </label>
-
-</div>
 
   <label>Withdrawal Amount ($)</label>
   <input type="number" id="withdrawAmount"
@@ -211,18 +212,15 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
 
   <label>Payment Account Details</label>
   <input type="text" id="withdrawAccount"
-         placeholder="Enter your wallet or account number">
+         placeholder="Wallet address or account number">
 
   <button class="full" type="button" disabled>
     Submit Withdrawal (Coming Soon)
   </button>
 
-  <p class="rule">
-    Minimum withdrawal is $50.
-  </p>
+  <p class="rule">Minimum withdrawal is $50.</p>
 </div>
 </section>
-
 <section id="games" class="page">
  <h2>🎮 Our Games</h2>
  <p class="muted" style="margin-bottom:15px">Browse games as a guest. Login is required to play.</p>
