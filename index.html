@@ -164,11 +164,42 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
 
  <div class="card">
   <h2>Withdrawal</h2>
-  <div class="line"><span>Account Balance</span><strong id="withdrawBalance">$0.00</strong></div>
-  <div class="line"><span>Minimum withdrawal</span><strong>$50.00</strong></div>
-  <button class="full" onclick="openProfile()">View Account</button>
-  <p class="rule">Withdrawals will be available after payment integration and account verification.</p>
- </div>
+
+  <div class="line">
+    <span>Account Balance</span>
+    <strong id="withdrawBalance">$0.00</strong>
+  </div>
+
+  <div class="line">
+    <span>Minimum Withdrawal</span>
+    <strong>$50.00</strong>
+  </div>
+
+  <label>Payment Method</label>
+  <select id="withdrawMethod">
+    <option value="">Select Payment Method</option>
+    <option value="Binance Pay">Binance Pay</option>
+    <option value="USDT TRC20">USDT (TRC20)</option>
+    <option value="bKash">bKash</option>
+    <option value="Nagad">Nagad</option>
+  </select>
+
+  <label>Withdrawal Amount ($)</label>
+  <input type="number" id="withdrawAmount"
+         placeholder="Minimum $50" min="50">
+
+  <label>Payment Account Details</label>
+  <input type="text" id="withdrawAccount"
+         placeholder="Enter your wallet or account number">
+
+  <button class="full" type="button" disabled>
+    Submit Withdrawal (Coming Soon)
+  </button>
+
+  <p class="rule">
+    Minimum withdrawal is $50.
+  </p>
+</div>
 </section>
 
 <section id="games" class="page">
