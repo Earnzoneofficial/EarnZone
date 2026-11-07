@@ -176,13 +176,34 @@ footer{text-align:center;color:#74819b;font-size:11px;padding:25px}
   </div>
 
   <label>Payment Method</label>
-  <select id="withdrawMethod">
-    <option value="">Select Payment Method</option>
-    <option value="Binance Pay">Binance Pay</option>
-    <option value="USDT TRC20">USDT (TRC20)</option>
-    <option value="bKash">bKash</option>
-    <option value="Nagad">Nagad</option>
-  </select>
+
+<div class="payment-methods">
+
+  <label class="payment-option">
+    <input type="radio" name="withdrawMethod" value="bKash">
+    <img src="https://logo.clearbit.com/bkash.com" alt="bKash">
+    <span>bKash</span>
+  </label>
+
+  <label class="payment-option">
+    <input type="radio" name="withdrawMethod" value="Nagad">
+    <img src="https://logo.clearbit.com/nagad.com.bd" alt="Nagad">
+    <span>Nagad</span>
+  </label>
+
+  <label class="payment-option">
+    <input type="radio" name="withdrawMethod" value="Binance Pay">
+    <img src="https://logo.clearbit.com/binance.com" alt="Binance">
+    <span>Binance Pay</span>
+  </label>
+
+  <label class="payment-option">
+    <input type="radio" name="withdrawMethod" value="USDT TRC20">
+    <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT">
+    <span>USDT TRC20</span>
+  </label>
+
+</div>
 
   <label>Withdrawal Amount ($)</label>
   <input type="number" id="withdrawAmount"
