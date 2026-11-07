@@ -487,6 +487,49 @@ if (path === "/api/admin/google-login" && request.method === "POST") {
     headers
   );
 }
+      // ADMIN USER MANAGEMENT
+if (path === "/api/admin/users" && request.method === "GET") {
+  const admin = await getAdmin(request, env);
+
+  if (!admin) {
+    return json({ error: "Admin access required." }, 401);
+  }
+
+  const stats = await env.DB.prepare(`
+    SELECT
+      COUNT(*) AS total_users,
+      SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_users,
+      COALESCE(SUM(balance_usd), 0) AS total_balance,
+      COALESCE(SUM(coins), 0) AS total_coins
+    FROM users
+  `).first();
+
+  const users = await env.DB.prepare(`
+    SELECT
+      u.id,
+      u.username,
+      u.email,
+      u.coins,
+      u.balance_usd,
+      u.status,
+      u.created_at,
+      (SELECT COUNT(*) FROM referrals r
+       WHERE r.referrer_user_id = u.id) AS referrals,
+      (SELECT COALESCE(SUM(a.amount_usd), 0)
+       FROM ad_earnings a WHERE a.user_id = u.id) AS ad_income,
+      (SELECT COALESCE(SUM(w.amount_usd), 0)
+       FROM withdrawals w
+       WHERE w.user_id = u.id AND w.status = 'approved') AS withdrawn
+    FROM users u
+    ORDER BY u.id DESC
+  `).all();
+
+  return json({
+    success: true,
+    stats,
+    users: users.results
+  });
+}
       // ADMIN PROFILE / ACCESS CHECK
       if (path === "/api/admin/me" && request.method === "GET") {
         const admin = await getAdmin(request, env);
