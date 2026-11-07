@@ -554,6 +554,11 @@ if (path === "/api/admin-secret-test") {
     secretType: typeof env.ADMIN_SETUP_KEY
   });
 }
+      if (path === "/admin" || path === "/admin/") {
+  const adminUrl = new URL(request.url);
+  adminUrl.pathname = "/admin.html";
+  return env.ASSETS.fetch(new Request(adminUrl, request));
+}
       return env.ASSETS.fetch(request);
 
     } catch (error) {
