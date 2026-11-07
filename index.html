@@ -416,6 +416,7 @@ async function refreshAccount() {
  }
 }
 
+
 async function registerUser() {
  const username = document.getElementById('username').value.trim();
  const email = document.getElementById('email').value.trim();
@@ -427,8 +428,13 @@ async function registerUser() {
  }
 
  try {
+  const referralCode = new URLSearchParams(window.location.search).get('ref') || '';
+
   const {response, result} = await authRequest('/api/register', {
-   username, email, password
+   username,
+   email,
+   password,
+   referralCode
   });
 
   if(response.ok) {
