@@ -467,6 +467,70 @@ if (path === "/api/admin/withdrawals" && request.method === "GET") {
     withdrawals: withdrawals.results
   });
 }
+      // ADMIN APPROVE / REJECT WITHDRAWAL
+if (
+  path.startsWith("/api/admin/withdrawals/") &&
+  request.method === "POST"
+) {
+  const admin = await getAdmin(request, env);
+
+  if (!admin) {
+    return json({ error: "Admin access required." }, 401);
+  }
+
+  const id = Number(path.split("/").pop());
+
+  if (!Number.isInteger(id) || id < 1) {
+    return json({ error: "Invalid withdrawal ID." }, 400);
+  }
+
+  const body = await request.json();
+  const action = String(body.action || "");
+
+  if (!["approve", "reject"].includes(action)) {
+    return json({ error: "Invalid action." }, 400);
+  }
+
+  if (action === "approve") {
+    const result = await env.DB.prepare(`
+      UPDATE withdrawals
+      SET status = 'approved',
+          processed_at = CURRENT_TIMESTAMP
+      WHERE id = ? AND status = 'pending'
+    `).bind(id).run();
+
+    if (result.meta.changes !== 1) {
+      return json({ error: "Request not found or already processed." }, 409);
+    }
+
+    return json({ success: true, message: "Withdrawal approved." });
+  }
+
+  const result = await env.DB.prepare(`
+    UPDATE withdrawals
+    SET status = 'rejected',
+        processed_at = CURRENT_TIMESTAMP
+    WHERE id = ? AND status = 'pending'
+  `).bind(id).run();
+
+  if (result.meta.changes !== 1) {
+    return json({ error: "Request not found or already processed." }, 409);
+  }
+
+  const withdrawal = await env.DB.prepare(`
+    SELECT user_id, amount_usd
+    FROM withdrawals
+    WHERE id = ?
+  `).bind(id).first();
+
+  await env.DB.prepare(`
+    UPDATE users
+    SET balance_usd = balance_usd + ?
+    WHERE id = ?
+  `).bind(withdrawal.amount_usd, withdrawal.user_id).run();
+
+  return json({ success: true, message: "Withdrawal rejected and balance refunded." });
+}
       // ADMIN LOGOUT
       if (path === "/api/admin/logout" && request.method === "POST") {
         const token = getCookie(request, "ez_admin");
