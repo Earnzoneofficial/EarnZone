@@ -283,7 +283,64 @@ return json({ success: true, message: "Account created." }, 201, headers);
         if (!user) return json({ error: "Please login." }, 401);
         return json({ success: true, user });
       }
+// USER WITHDRAWAL REQUEST
+if (path === "/api/withdraw" && request.method === "POST") {
+  const user = await getUser(request, env);
 
+  if (!user) {
+    return json({ error: "Please login." }, 401);
+  }
+
+  const body = await request.json();
+
+  const amount = Number(body.amount);
+  const method = String(body.method || "").trim();
+  const account = String(body.account || "").trim();
+
+  if (!Number.isFinite(amount) || amount < 50) {
+    return json({ error: "Minimum withdrawal is $50." }, 400);
+  }
+
+  if (!["bKash", "Nagad", "Binance Pay", "USDT TRC20"].includes(method)) {
+    return json({ error: "Invalid payment method." }, 400);
+  }
+
+  if (account.length < 5 || account.length > 200) {
+    return json({ error: "Enter valid account details." }, 400);
+  }
+
+  const result = await env.DB.prepare(`
+    UPDATE users
+    SET balance_usd = balance_usd - ?
+    WHERE id = ? AND balance_usd >= ?
+  `).bind(amount, user.id, amount).run();
+
+  if (result.meta.changes !== 1) {
+    return json({ error: "Insufficient balance." }, 400);
+  }
+
+  try {
+    await env.DB.prepare(`
+      INSERT INTO withdrawals
+      (user_id, amount_usd, method, account_details, status)
+      VALUES (?, ?, ?, ?, 'pending')
+    `).bind(user.id, amount, method, account).run();
+  } catch (error) {
+    await env.DB.prepare(`
+      UPDATE users
+      SET balance_usd = balance_usd + ?
+      WHERE id = ?
+    `).bind(amount, user.id).run();
+
+    return json({ error: "Withdrawal request failed." }, 500);
+  }
+
+  return json({
+    success: true,
+    message: "Withdrawal request submitted.",
+    status: "pending"
+  });
+}
       // USER LOGOUT
       if (path === "/api/logout" && request.method === "POST") {
         const token = getCookie(request, "ez_session");
