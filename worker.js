@@ -438,7 +438,35 @@ if (path === "/api/withdraw" && request.method === "POST") {
 
         return json({ success: true, admin });
       }
+// ADMIN WITHDRAWAL REQUESTS
+if (path === "/api/admin/withdrawals" && request.method === "GET") {
+  const admin = await getAdmin(request, env);
 
+  if (!admin) {
+    return json({ error: "Admin access required." }, 401);
+  }
+
+  const withdrawals = await env.DB.prepare(`
+    SELECT
+      withdrawals.id,
+      withdrawals.user_id,
+      users.username,
+      users.email,
+      withdrawals.amount_usd,
+      withdrawals.method,
+      withdrawals.account_details,
+      withdrawals.status,
+      withdrawals.created_at
+    FROM withdrawals
+    JOIN users ON users.id = withdrawals.user_id
+    ORDER BY withdrawals.id DESC
+  `).all();
+
+  return json({
+    success: true,
+    withdrawals: withdrawals.results
+  });
+}
       // ADMIN LOGOUT
       if (path === "/api/admin/logout" && request.method === "POST") {
         const token = getCookie(request, "ez_admin");
