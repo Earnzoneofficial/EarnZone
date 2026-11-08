@@ -794,9 +794,13 @@ function requireLogin(action) {
 }
 
 function openRewards() {
- if(!requireLogin()) return;
+  if (!requireLogin()) return;
 
- alert('Reward ads are not integrated yet. Please wait for the ad system.');
+  const script = document.createElement('script');
+  script.src = 'https://pl32243533.profitableratecpmnetwork.com/01/ef/a0/01efa07c648a0ed02a3317aee40216cf.js';
+  script.async = true;
+
+  document.body.appendChild(script);
 }
 
 async function copyReferral() {
